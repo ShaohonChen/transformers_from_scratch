@@ -2,7 +2,6 @@ import datasets
 import transformers
 import swanlab
 from swanlab.integration.huggingface import SwanLabCallback
-import torch.distributed as dist
 
 
 def main():
