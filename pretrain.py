@@ -6,7 +6,7 @@ from swanlab.integration.huggingface import SwanLabCallback
 
 def main():
     # using swanlab to save log
-    swanlab.init("TransformersFromScratch")
+    swanlab.init("WikiLLM")
 
     # load dataset
     raw_datasets = datasets.load_dataset(
@@ -24,7 +24,7 @@ def main():
     # preprocess dataset
     def tokenize(element):
         outputs = tokenizer(
-            element["completion"],
+            element["text"],
             truncation=True,
             max_length=context_length,
             return_overflowing_tokens=True,
@@ -64,14 +64,14 @@ def main():
 
     # train
     args = transformers.TrainingArguments(
-        output_dir="checkpoints",
+        output_dir="WikiLLM",
         per_device_train_batch_size=24,  # 每个GPU的训练batch数
         per_device_eval_batch_size=24,  # 每个GPU的测试batch数
         eval_strategy="steps",
         eval_steps=5_000,
         logging_steps=500,
         gradient_accumulation_steps=12,  # 梯度累计总数
-        num_train_epochs=1,
+        num_train_epochs=2,  # 训练epoch数
         weight_decay=0.1,
         warmup_steps=1_000,
         optim="adamw_torch",  # 优化器使用adamw
@@ -96,12 +96,12 @@ def main():
     trainer.train()
 
     # save model
-    model.save_pretrained("./output/")  # 保存模型的路径
+    model.save_pretrained("./WikiLLM/Weight")  # 保存模型的路径
 
     # generate
     pipe = transformers.pipeline("text-generation", model=model, tokenizer=tokenizer)
     print("GENERATE:", pipe("人工智能", num_return_sequences=1)[0]["generated_text"])
-    prompts = ["牛顿是", "北京市的人口", "太平洋的面积"]
+    prompts = ["牛顿", "北京市", "亚洲历史"]
     examples = []
     for i in range(3):
         # 根据提示词生成数据
