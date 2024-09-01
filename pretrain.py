@@ -68,16 +68,16 @@ def main():
         per_device_train_batch_size=32,  # 每个GPU的训练batch数
         per_device_eval_batch_size=32,  # 每个GPU的测试batch数
         eval_strategy="steps",
-        eval_steps=5_000,
-        logging_steps=500,
+        eval_steps=5_00,
+        logging_steps=50,
         gradient_accumulation_steps=8,  # 梯度累计总数
         num_train_epochs=2,  # 训练epoch数
         weight_decay=0.1,
-        warmup_steps=1_000,
+        warmup_steps=2_00,
         optim="adamw_torch",  # 优化器使用adamw
         lr_scheduler_type="cosine",  # 学习率衰减策略
         learning_rate=5e-4,  # 基础学习率，
-        save_steps=5_000,
+        save_steps=5_00,
         save_total_limit=10,
         bf16=True,  # 开启bf16训练, 对于Amper架构以下的显卡建议替换为fp16=True
     )
