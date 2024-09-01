@@ -2,7 +2,7 @@ import datasets
 import transformers
 import swanlab
 from swanlab.integration.huggingface import SwanLabCallback
-
+import modelscope
 
 def main():
     # using swanlab to save log
@@ -18,6 +18,13 @@ def main():
     print(raw_datasets)
 
     # load tokenizers
+    # 因为国内无法直接访问HuggingFace，因此使用魔搭将模型的配置文件和Tokenizer下载下来
+    modelscope.AutoConfig.from_pretrained("Qwen/Qwen2-0.5B").save_pretrained(
+        "Qwen2-0.5B"
+    )
+    modelscope.AutoTokenizer.from_pretrained("Qwen/Qwen2-0.5B").save_pretrained(
+        "Qwen2-0.5B"
+    )
     context_length = 512  # use a small context length
     # tokenizer = transformers.AutoTokenizer.from_pretrained("Qwen/Qwen2-0.5B")
     tokenizer = transformers.AutoTokenizer.from_pretrained(
