@@ -8,7 +8,7 @@
 
 * 实验记录：[SwanLab](https://swanlab.cn/@ShaohonChen/WikiLLM/overview)
 
-* 数据集下载：[百度网盘](.link)，[huggingface](https://huggingface.co/datasets/fjcanyue/wikipedia-zh-cn)
+* 数据集下载：[百度网盘（j8ee）](https://pan.baidu.com/s/1p5F52bRlnpSY7F78q0hz7A?pwd=j8ee)，[huggingface](https://huggingface.co/datasets/fjcanyue/wikipedia-zh-cn)
 
 ---
 
@@ -39,7 +39,7 @@ pip install swanlab transformers datasets accelerate modelscope
 
 huggingface链接：[wikipedia-zh-cn](https://huggingface.co/datasets/fjcanyue/wikipedia-zh-cn)
 
-百度网盘下载地址：[百度网盘](.link)
+百度网盘下载地址：[百度网盘（j8ee）](https://pan.baidu.com/s/1p5F52bRlnpSY7F78q0hz7A?pwd=j8ee)
 
 下载`wikipedia-zh-cn-20240820.json`文件后放到项目目录下`./data/`文件夹中
 
