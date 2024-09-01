@@ -59,18 +59,19 @@ def main():
     swanlab_callback = SwanLabCallback()
     args = transformers.TrainingArguments(
         output_dir="codeparrot-ds",
-        per_device_train_batch_size=32,
-        per_device_eval_batch_size=32,
+        per_device_train_batch_size=16,
+        per_device_eval_batch_size=16,
         evaluation_strategy="steps",
-        eval_steps=5,
-        logging_steps=5,
+        eval_steps=2_000,
+        logging_steps=2_000,
         gradient_accumulation_steps=8,
         num_train_epochs=1,
         weight_decay=0.1,
-        warmup_steps=1,
+        warmup_steps=800,
         lr_scheduler_type="cosine",
         learning_rate=5e-4,
-        save_steps=5,
+        save_steps=2_000,
+        fp16=True,
         fp16=True,
     )
     # enjoy training
