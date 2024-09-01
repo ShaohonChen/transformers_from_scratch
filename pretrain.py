@@ -21,7 +21,7 @@ def main():
     context_length = 512  # use a small context length
     # tokenizer = transformers.AutoTokenizer.from_pretrained("Qwen/Qwen2-0.5B")
     tokenizer = transformers.AutoTokenizer.from_pretrained(
-        "Qwen2-0.5B"
+        "./Qwen2-0.5B"
     )  # download from local
 
     # preprocess dataset
@@ -49,7 +49,7 @@ def main():
 
     # prepare a model from scratch
     config = transformers.AutoConfig.from_pretrained(
-        "Qwen/Qwen2-0.5B",
+        "./Qwen2-0.5B",
         vocab_size=len(tokenizer),
         hidden_size=512,
         intermediate_size=2048,
