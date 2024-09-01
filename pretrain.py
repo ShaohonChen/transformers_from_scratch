@@ -19,7 +19,10 @@ def main():
 
     # load tokenizers
     context_length = 512  # use a small context length
-    tokenizer = transformers.AutoTokenizer.from_pretrained("Qwen/Qwen2-0.5B")
+    # tokenizer = transformers.AutoTokenizer.from_pretrained("Qwen/Qwen2-0.5B")
+    tokenizer = transformers.AutoTokenizer.from_pretrained(
+        "Qwen2-0.5B"
+    )  # download from local
 
     # preprocess dataset
     def tokenize(element):
