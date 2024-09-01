@@ -20,6 +20,7 @@ def main():
     )
     print("dataset info")
     print(raw_datasets)
+
     # load tokenizers
     context_length = 512  # use a small context length
     tokenizer = transformers.AutoTokenizer.from_pretrained("Qwen/Qwen2-0.5B")
@@ -94,9 +95,11 @@ def main():
         eval_dataset=tokenized_datasets["test"],
         callbacks=[swanlab_callback],
     )
-    # trainer.train()
+    trainer.train()
+
     # save model
     model.save_pretrained("./output/")
+
     # generate
     pipe = transformers.pipeline("text-generation", model=model, tokenizer=tokenizer)
     print(pipe("陕西省是", num_return_sequences=1)[0]["generated_text"])
