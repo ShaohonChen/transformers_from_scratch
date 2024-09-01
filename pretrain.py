@@ -2,6 +2,7 @@ import datasets
 import transformers
 import swanlab
 from swanlab.integration.huggingface import SwanLabCallback
+import torch.distributed as dist
 
 
 def main():
@@ -13,11 +14,7 @@ def main():
         "json", data_files="data/wikipedia-cn-20230720-filtered.json"
     )
 
-    raw_datasets = (
-        raw_datasets["train"]
-        .select(range(1000))
-        .train_test_split(test_size=0.1, seed=2333)
-    )
+    raw_datasets = raw_datasets["train"].train_test_split(test_size=0.1, seed=2333)
     print("dataset info")
     print(raw_datasets)
 
@@ -67,12 +64,11 @@ def main():
     print(f"Model size: {model_size/1000**2:.1f}M parameters")
 
     # train
-    swanlab_callback = SwanLabCallback()
     args = transformers.TrainingArguments(
         output_dir="checkpoints",
-        per_device_train_batch_size=16,
-        per_device_eval_batch_size=16,
-        evaluation_strategy="steps",
+        per_device_train_batch_size=32,
+        per_device_eval_batch_size=32,
+        eval_strategy="steps",
         eval_steps=2_000,
         logging_steps=500,
         gradient_accumulation_steps=8,
@@ -93,7 +89,7 @@ def main():
         data_collator=data_collator,
         train_dataset=tokenized_datasets["train"],
         eval_dataset=tokenized_datasets["test"],
-        callbacks=[swanlab_callback],
+        callbacks=[SwanLabCallback()],
     )
     trainer.train()
 
