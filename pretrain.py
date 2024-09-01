@@ -66,12 +66,12 @@ def main():
     # train
     args = transformers.TrainingArguments(
         output_dir="checkpoints",
-        per_device_train_batch_size=16,
-        per_device_eval_batch_size=16,
+        per_device_train_batch_size=24,
+        per_device_eval_batch_size=24,
         eval_strategy="steps",
         eval_steps=2_000,
         logging_steps=500,
-        gradient_accumulation_steps=8,
+        gradient_accumulation_steps=12,
         num_train_epochs=1,
         weight_decay=0.1,
         warmup_steps=1_000,
