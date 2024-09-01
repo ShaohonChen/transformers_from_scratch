@@ -77,10 +77,11 @@ def main():
         gradient_accumulation_steps=4,
         num_train_epochs=1,
         weight_decay=0.1,
-        warmup_steps=2,
+        warmup_steps=800,
         lr_scheduler_type="cosine",
         learning_rate=5e-4,
-        save_steps=5,
+        save_steps=2_000,
+        fp16=True,
         fp16=True,
     )
     # enjoy training
