@@ -13,7 +13,11 @@ def main():
         "json", data_files="data/wikipedia-cn-20230720-filtered.json"
     )
 
-    raw_datasets = raw_datasets.train_test_split(test_size=0.1)
+    raw_datasets = (
+        raw_datasets["train"]
+        .select(range(1000))
+        .train_test_split(test_size=0.1, seed=2333)
+    )
     print("dataset info")
     print(raw_datasets)
     # load tokenizers
@@ -47,27 +51,33 @@ def main():
     config = transformers.AutoConfig.from_pretrained(
         "Qwen/Qwen2-0.5B",
         vocab_size=len(tokenizer),
+        hidden_size=512,
+        intermediate_size=2048,
+        num_attention_heads=8,
+        num_hidden_layers=12,
         n_ctx=context_length,
         bos_token_id=tokenizer.bos_token_id,
         eos_token_id=tokenizer.eos_token_id,
     )
     model = transformers.Qwen2ForCausalLM(config)
     model_size = sum(t.numel() for t in model.parameters())
+    print("Model setting")
+    print(config)
     print(f"Model size: {model_size/1000**2:.1f}M parameters")
 
     # train
     swanlab_callback = SwanLabCallback()
     args = transformers.TrainingArguments(
-        output_dir="codeparrot-ds",
-        per_device_train_batch_size=32,
-        per_device_eval_batch_size=32,
-        evaluation_strategy="steps",
+        output_dir="checkpoints",
+        per_device_train_batch_size=2,
+        per_device_eval_batch_size=2,
+        eval_strategy="steps",
         eval_steps=5,
-        logging_steps=5,
-        gradient_accumulation_steps=8,
+        logging_steps=1,
+        gradient_accumulation_steps=4,
         num_train_epochs=1,
         weight_decay=0.1,
-        warmup_steps=1,
+        warmup_steps=2,
         lr_scheduler_type="cosine",
         learning_rate=5e-4,
         save_steps=5,
@@ -83,11 +93,11 @@ def main():
         eval_dataset=tokenized_datasets["test"],
         callbacks=[swanlab_callback],
     )
-    trainer.train()
+    # trainer.train()
     # save model
     model.save_pretrained("./output/")
     # generate
-    pipe = transformers.pipeline("text-generation", model=model)
+    pipe = transformers.pipeline("text-generation", model=model, tokenizer=tokenizer)
     print(pipe("陕西省是", num_return_sequences=1)[0]["generated_text"])
 
 
