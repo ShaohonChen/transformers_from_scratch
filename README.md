@@ -41,7 +41,7 @@ huggingface链接：[wikipedia-zh-cn](https://huggingface.co/datasets/fjcanyue/w
 
 百度网盘下载地址：[百度网盘（j8ee）](https://pan.baidu.com/s/1p5F52bRlnpSY7F78q0hz7A?pwd=j8ee)
 
-下载`wikipedia-zh-cn-20240820.json`文件后放到项目目录下`./data/`文件夹中
+下载`wikipedia-zh-cn-20240820.json`文件后放到项目目录下`./WIKI_CN/`文件夹中
 
 该数据集文件约1.99G大，共有1.44M条数据。虽然数据集中包含文章标题，但是实际上在预训练阶段用不上。正文片段参考：
 
