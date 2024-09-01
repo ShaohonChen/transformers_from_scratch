@@ -10,7 +10,7 @@ def main():
 
     # load dataset
     raw_datasets = datasets.load_dataset(
-        "json", data_files="data/wikipedia-zh-cn-20240820.json"
+        "json", data_files="/data/WIKI_CN/wikipedia-zh-cn-20240820.json"
     )
 
     raw_datasets = raw_datasets["train"].train_test_split(test_size=0.1, seed=2333)
@@ -65,12 +65,12 @@ def main():
     # train
     args = transformers.TrainingArguments(
         output_dir="WikiLLM",
-        per_device_train_batch_size=24,  # 每个GPU的训练batch数
-        per_device_eval_batch_size=24,  # 每个GPU的测试batch数
+        per_device_train_batch_size=32,  # 每个GPU的训练batch数
+        per_device_eval_batch_size=32,  # 每个GPU的测试batch数
         eval_strategy="steps",
         eval_steps=5_000,
         logging_steps=500,
-        gradient_accumulation_steps=12,  # 梯度累计总数
+        gradient_accumulation_steps=8,  # 梯度累计总数
         num_train_epochs=2,  # 训练epoch数
         weight_decay=0.1,
         warmup_steps=1_000,

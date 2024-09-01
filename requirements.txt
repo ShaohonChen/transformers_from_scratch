@@ -1,0 +1,4 @@
+swanlab==0.3.19a3
+transformers
+datasets
+accelerate

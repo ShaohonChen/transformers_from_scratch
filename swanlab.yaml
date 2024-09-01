@@ -1,0 +1,13 @@
+apiVersion: swanlab/v1
+kind: Folder
+metadata:
+  name: WikiLLM
+  desc: Pretrain LLM using wiki data
+spec:
+  python: "3.10"
+  entry: "pretrain.py"
+  volumes:
+    - name: "WIKI_CN"
+      id: "9sqjot"
+  exclude:
+    - "WIKI_CN"
