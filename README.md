@@ -1,93 +1,88 @@
 # transformers_from_scratch
 
+大语言模型（Large Language Model，简称LLM），指使用大量文本数据训练的深度学习模型，可以生成自然语言文本或理解语言文本的含义。
 
+![llm](./images/llm.png)
 
-## Getting started
+虽然网上有大量关于transformer理论、大语言模型微调的教程。但是少有关于预训练的解释。本文则从如何自己实战预训练一个大语言模型的角度，使用wiki数据集进行一个简单的从零预训练工作，并附上使用swanlab launch白嫖显卡的方法
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+* 实验记录：[SwanLab](https://swanlab.cn/@ShaohonChen/WikiLLM/overview)
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+* 数据集下载：[百度网盘](.link)，[huggingface](https://huggingface.co/datasets/fjcanyue/wikipedia-zh-cn)
 
-## Add your files
+---
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## 安装环境
+
+首先，项目推荐使用python3.10。需要安装的python包如下：
+
+```txt
+swanlab
+transformers
+datasets
+accelerate
+```
+
+使用如下命令一键安装：
+
+```bash
+pip install swanlab transformers datasets accelerate modelscope
+```
+
+---
+
+## 下载数据集
+
+本教程使用的是中文wiki数据，理论上预训练数据集种类越丰富、数据量越大越好，后续会增加别的数据集。
+
+![dataset](./images/dataset.png)
+
+huggingface链接：[wikipedia-zh-cn](https://huggingface.co/datasets/fjcanyue/wikipedia-zh-cn)
+
+百度网盘下载地址：[百度网盘](.link)
+
+下载`wikipedia-zh-cn-20240820.json`文件后放到项目目录下`./data/`文件夹中
+
+该数据集文件约1.99G大，共有1.44M条数据。虽然数据集中包含文章标题，但是实际上在预训练阶段用不上。正文片段参考：
+
+```txt
+数学是研究数量、结构以及空间等概念及其变化的一门学科，属于形式科学的一种。数学利用抽象化和逻辑推理，从计数、计算、量度、对物体形状及运动的观察发展而成。数学家们拓展这些概念...
+```
+
+使用[🤗Huggingface Datasets](https://huggingface.co/docs/datasets/index)加载数据集的代码如下：
+
+```python
+from datasets import load_dataset
+
+ds = load_dataset("fjcanyue/wikipedia-zh-cn")
+```
+
+如果使用百度网盘下载的json文件，可以通过如下代码加载
+
+```python
+raw_datasets = datasets.load_dataset(
+    "json", data_files="data/wikipedia-zh-cn-20240820.json"
+)
+
+raw_datasets = raw_datasets["train"].train_test_split(test_size=0.1, seed=2333)
+print("dataset info")
+print(raw_datasets)
+```
+
+---
+
+## 运行训练
+
+运行如下命令
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.115lab.club:9000/ShaohonChen/transformers_from_scratch.git
-git branch -M main
-git push -uf origin main
+python pretrain.py
 ```
 
-## Integrate with your tools
+可以看到如下训练日志。由于训练时间较长，推荐使用tmux将训练任务hold住
 
-- [ ] [Set up project integrations](https://gitlab.115lab.club:9000/ShaohonChen/transformers_from_scratch/-/settings/integrations)
+![terminal](./images/terminal.png)
 
-## Collaborate with your team
+可以在[SwanLab](https://swanlab.cn)中查看最终的训练结果：
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+![log](./images/log.png)
