@@ -69,19 +69,19 @@ def main():
     swanlab_callback = SwanLabCallback()
     args = transformers.TrainingArguments(
         output_dir="checkpoints",
-        per_device_train_batch_size=2,
-        per_device_eval_batch_size=2,
-        eval_strategy="steps",
-        eval_steps=5,
-        logging_steps=1,
-        gradient_accumulation_steps=4,
+        per_device_train_batch_size=16,
+        per_device_eval_batch_size=16,
+        evaluation_strategy="steps",
+        eval_steps=2_000,
+        logging_steps=500,
+        gradient_accumulation_steps=8,
         num_train_epochs=1,
         weight_decay=0.1,
-        warmup_steps=800,
+        warmup_steps=1_000,
         lr_scheduler_type="cosine",
         learning_rate=5e-4,
         save_steps=2_000,
-        fp16=True,
+        save_total_limit=10,
         fp16=True,
     )
     # enjoy training
